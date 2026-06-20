@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análise Gratuita – Magos Gestão</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f5f5f5; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+  .wrap { max-width: 520px; width: 100%; }
+  .header { background: #C0392B; border-radius: 12px; padding: 2rem 1.5rem 1.5rem; text-align: center; margin-bottom: 1.5rem; }
+  .header svg { margin-bottom: 0.75rem; }
+  .header h1 { font-size: 20px; font-weight: 600; color: #fff; line-height: 1.4; margin-bottom: 0.25rem; }
+  .header p { font-size: 13px; color: rgba(255,255,255,0.75); }
+  .card { background: #fff; border-radius: 12px; padding: 1.75rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .field { margin-bottom: 1.25rem; }
+  label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
+  label .req { color: #C0392B; }
+  input { width: 100%; height: 44px; border: 1px solid #ddd; border-radius: 8px; padding: 0 14px; font-size: 15px; color: #222; transition: border 0.15s; }
+  input:focus { outline: none; border: 2px solid #C0392B; }
+  input::placeholder { color: #aaa; }
+  input.erro { border: 2px solid #C0392B; background: #fff8f8; }
+  .msg-erro { font-size: 12px; color: #C0392B; margin-top: 4px; display: none; }
+  .msg-erro.visivel { display: block; }
+  button { width: 100%; margin-top: 0.5rem; padding: 14px; background: #C0392B; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  button:hover { background: #A93226; }
+  button:disabled { background: #e0a09a; cursor: not-allowed; }
+  .sucesso { display: none; text-align: center; padding: 2rem 0.5rem; }
+  .sucesso .icone { font-size: 3rem; margin-bottom: 1rem; }
+  .sucesso h2 { font-size: 20px; font-weight: 600; color: #222; margin-bottom: 0.5rem; }
+  .sucesso p { font-size: 14px; color: #666; line-height: 1.6; }
+  .legal { font-size: 11px; color: #aaa; text-align: center; margin-top: 1rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="20" fill="rgba(255,255,255,0.15)"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="22" fill="white">🪄</text></svg>
+    <h1>Receba uma análise gratuita<br>do seu restaurante</h1>
+    <p>Preencha em menos de 1 minuto</p>
+  </div>
+
+  <div class="card">
+    <div id="corpo">
+      <div class="field">
+        <label>Nome do responsável <span class="req">*</span></label>
+        <input type="text" id="nome" placeholder="Como você se chama?" />
+        <p class="msg-erro" id="erro-nome">Por favor, informe seu nome.</p>
+      </div>
+      <div class="field">
+        <label>Telefone / WhatsApp <span class="req">*</span></label>
+        <input type="tel" id="telefone" placeholder="(00) 00000-0000" />
+        <p class="msg-erro" id="erro-telefone">Por favor, informe seu telefone.</p>
+      </div>
+      <div class="field">
+        <label>Nome do restaurante no iFood <span class="req">*</span></label>
+        <input type="text" id="restaurante" placeholder="Como aparece no iFood?" />
+        <p class="msg-erro" id="erro-restaurante">Por favor, informe o nome do restaurante.</p>
+      </div>
+      <div class="field">
+        <label>Cidade <span class="req">*</span></label>
+        <input type="text" id="cidade" placeholder="Onde fica seu restaurante?" />
+        <p class="msg-erro" id="erro-cidade">Por favor, informe a cidade.</p>
+      </div>
+      <div class="field" style="margin-bottom: 0.5rem;">
+        <label>Instagram do restaurante</label>
+        <input type="text" id="instagram" placeholder="@seurestaurante" />
+      </div>
+      <button id="btn" onclick="enviar()">Quero minha análise gratuita →</button>
+    </div>
+
+    <div class="sucesso" id="sucesso">
+      <div class="icone">✅</div>
+      <h2>Recebemos seus dados!</h2>
+      <p>Em breve nossa equipe entrará em contato<br>pelo WhatsApp para agendar sua análise.</p>
+    </div>
+  </div>
+
+  <p class="legal">Seus dados são usados apenas para entrar em contato com você.</p>
+</div>
+
+<script>
+// ▼▼▼ COLE AQUI A URL DO SEU GOOGLE APPS SCRIPT ▼▼▼
+const SCRIPT_URL = "COLE_A_URL_AQUI";
+// ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+function enviar() {
+  const campos = ["nome","telefone","restaurante","cidade"];
+  let valido = true;
+  campos.forEach(id => {
+    const val = document.getElementById(id).value.trim();
+    const input = document.getElementById(id);
+    const erro = document.getElementById("erro-" + id);
+    if (!val) {
+      input.classList.add("erro");
+      erro.classList.add("visivel");
+      valido = false;
+    } else {
+      input.classList.remove("erro");
+      erro.classList.remove("visivel");
+    }
+  });
+  if (!valido) return;
+
+  const btn = document.getElementById("btn");
+  btn.disabled = true;
+  btn.textContent = "Enviando...";
+
+  const dados = {
+    nome: document.getElementById("nome").value.trim(),
+    telefone: document.getElementById("telefone").value.trim(),
+    restaurante: document.getElementById("restaurante").value.trim(),
+    cidade: document.getElementById("cidade").value.trim(),
+    instagram: document.getElementById("instagram").value.trim()
+  };
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify(dados)
+  })
+  .then(() => {
+    document.getElementById("corpo").style.display = "none";
+    document.getElementById("sucesso").style.display = "block";
+  })
+  .catch(() => {
+    btn.disabled = false;
+    btn.textContent = "Quero minha análise gratuita →";
+    alert("Erro ao enviar. Tente novamente.");
+  });
+}
+</script>
+</body>
+</html>
